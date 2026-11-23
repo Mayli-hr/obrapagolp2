@@ -1,0 +1,108 @@
+<header class="top-nav" *ngIf="keycloak.isLoggedIn()">
+  <div class="nav-brand">
+    <span class="brand-icon">🏗️</span>
+    <div>
+      <div class="brand-title">ObraPago</div>
+      <div class="brand-subtitle">Control de Jornales & Planillas</div>
+    </div>
+  </div>
+
+  <nav class="nav-links">
+    <!-- 1. Obreros -->
+    <a routerLink="/obreros" routerLinkActive="active" class="nav-item" title="Módulo 1: Obreros">
+      <span>👷</span> Obreros
+    </a>
+
+    <!-- 3. Contratos -->
+    <a routerLink="/contratos" routerLinkActive="active" class="nav-item" title="Módulo 3: Contratos">
+      <span>📑</span> Contratos
+    </a>
+
+    <!-- 4. Jornadas Asistencia -->
+    <a routerLink="/asistencias" routerLinkActive="active" class="nav-item" title="Módulo 4: Jornadas Asistencia">
+      <span>📋</span> Jornadas
+    </a>
+
+    <!-- 6. Detalles Asistencia -->
+    <a routerLink="/detalles-asistencia" routerLinkActive="active" class="nav-item" title="Módulo 6: Detalles Asistencia">
+      <span>🔍</span> Det. Asistencia
+    </a>
+
+    <!-- 7. Adelantos -->
+    <a routerLink="/adelantos" routerLinkActive="active" class="nav-item" title="Módulo 7: Adelantos">
+      <span>💵</span> Adelantos
+    </a>
+
+    <!-- 5. Planilla Mensual -->
+    <a routerLink="/pagos" routerLinkActive="active" class="nav-item" title="Módulo 5: Planilla Mensual">
+      <span>💰</span> Planilla Mensual
+    </a>
+
+    <!-- 8. Detalles Pago -->
+    <a routerLink="/detalles-pago" routerLinkActive="active" class="nav-item" title="Módulo 8: Detalles de Pago">
+      <span>🧾</span> Det. Pagos
+    </a>
+
+    <!-- 10. Consulta Obrero Pago -->
+    <a routerLink="/consulta-obrero" routerLinkActive="active" class="nav-item text-warning" title="Módulo 10: Consulta Obrero Pago">
+      <span>🔎</span> Consulta Obrero
+    </a>
+
+    <!-- 2. Usuarios (Solo ADMIN) -->
+    <a *ngIf="keycloak.isAdmin()" routerLink="/usuarios" routerLinkActive="active" class="nav-item text-danger fw-bold" title="Módulo 2: Usuarios (Solo Admin)">
+      <span>👤</span> Usuarios
+    </a>
+
+    <!-- Módulo N:M: OBRAS Y ASIGNACIÓN MASIVA -->
+    <a routerLink="/obras" routerLinkActive="active" class="nav-item text-info fw-bold" title="Módulo N:M: Obras y Asignación Masiva">
+      <span>🏗️</span> Obras
+    </a>
+
+    <!-- 9. Accesos (Solo ADMIN) -->
+    <a *ngIf="keycloak.isAdmin()" routerLink="/accesos" routerLinkActive="active" class="nav-item text-danger fw-bold" title="Módulo 9: Accesos y Auditoría (Solo Admin)">
+      <span>🛡️</span> Accesos
+    </a>
+  </nav>
+
+  <!-- Panel de Autenticación / Keycloak & Switcher -->
+  <div class="auth-panel d-flex align-items-center gap-2">
+    <!-- Selector Rápido de Usuario / Rol -->
+    <div class="user-switcher d-flex align-items-center me-2">
+      <select class="form-select form-select-sm bg-dark text-white border-secondary shadow-sm"
+              [ngModel]="keycloak.getUsername()"
+              (ngModelChange)="cambiarUsuario($event)"
+              title="Cambiar Usuario / Rol en Tiempo Real"
+              style="font-size: 0.78rem; max-width: 190px;">
+        <option value="admin">🔴 Admin (Control Total)</option>
+        <option value="supervisor">🔵 Supervisor (Obras/Asist)</option>
+        <option value="planillero">🟡 Planillero (Pagos/Vales)</option>
+        <option value="obrero">⚪ Obrero (Solo Consulta)</option>
+      </select>
+    </div>
+
+    <div class="user-badge" *ngIf="keycloak.isLoggedIn()">
+      <div class="user-info text-end">
+        <div class="user-name fw-bold">{{ keycloak.getUserFullName() }}</div>
+        <div class="user-role-badge">
+          <span class="badge" [ngClass]="keycloak.getRoleBadgeInfo().color">
+            {{ keycloak.getRoleBadgeInfo().label }}
+          </span>
+          <span class="badge bg-dark border text-light ms-1" style="font-size: 0.68rem;">
+            {{ keycloak.getRoleBadgeInfo().desc }}
+          </span>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-outline-light ms-2 logout-btn" (click)="logout()" title="Cerrar Sesión">
+        🚪 Salir
+      </button>
+    </div>
+
+    <button *ngIf="!keycloak.isLoggedIn()" class="btn btn-sm btn-primary fw-bold" (click)="login()">
+      🔐 Iniciar Sesión (Keycloak)
+    </button>
+  </div>
+</header>
+
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
